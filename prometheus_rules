@@ -1,6 +1,8 @@
-1)- go to /etc/prometheus/prometheus.yml to enable Rules:
+1)-edit /etc/prometheus/prometheus.yml to enable Rules:
 
 sudo vi /etc/prometheus/prometheus.yml
+
+let it for example (rules.yml)
 
 2)- Create rules file(rules.yml) under /etc/prometheus/ directory:
 
@@ -9,6 +11,11 @@ sudo vi /etc/prometheus/rules.yml
 3)-for test add those lines:
 
 groups:
+  - name: low-space-check-rule
+    rules:
+      - record: disk_space
+        alert: LowDiskSpace
+        expr: 100 * node_filesystem_free_bytes{job="nodes"} / node_filesystem_size_bytes{job="nodes"} < 10
   - name: check-rule
     rules:
       - record: node_network_rate

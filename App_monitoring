@@ -1,0 +1,76 @@
+1)- create working directory 
+
+mkdir app/
+
+2)-create file for app nodejs and add lines:
+
+cd app/
+
+vi index.js
+
+------------------------
+let express = require('express');
+let app = express();
+
+const client = require('prom-client');
+
+// Create a Registry which registers the metrics
+const register = new client.Registry()
+
+// Add a default label which is added to all metrics
+register.setDefaultLabels({
+    app: 'example-nodejs-app'
+})
+
+// Enable the collection of default metrics
+client.collectDefaultMetrics({ register })
+
+app.get('/metrics', async function (req, res) {
+    // Return all metrics the Prometheus exposition format
+    res.set('Content-Type', register.contentType);
+    let metrics = await register.metrics();
+    res.send(metrics);
+})
+
+let server = app.listen(8000, function () {
+    let port = server.address().port
+    console.log("Application running on port: %s", port)
+})
+---------------------------
+
+3)- install dependancies :
+
+npm i express prom-client
+
+4)-run app in background
+
+node index.js
+
+bg <process num>
+
+The nodeJs code listens on HTTP port 8000.
+
+5)-edit /etc/prometheus/prometheus.yml to add another target in the scrabers section for app
+
+sudo vi /etc/prometheus/prometheus.yml
+
+- job_name: "<target name>"
+    static_configs:
+      - targets: ['<  >', '<  >']
+      
+sudo systemctl restart prometheus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

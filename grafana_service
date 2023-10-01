@@ -23,4 +23,14 @@ sudo systemctl status grafana-server
 
 The Grafana listens on HTTP port 3000 by default.
 
- 
+4)-enter username and password first time they are :
+
+username : admin
+password : admin
+
+then add new ones 
+
+5)-add data source (prometheus)
+
+6)-import grafana dashboard
+

@@ -27,16 +27,20 @@ sudo mkdir /etc/alertmanager
 
 sudo vi /etc/alertmanager/alertmanager.yml
 
+global:
 route:
-  receiver: 'slack-notifications'
-
+  receiver: 'slack'
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 15s
 receivers:
-- name: 'slack-notifications'
+- name: 'slack'
   slack_configs:
-  - api_url: 'https://hooks.slack.com/services/YOUR-SLACK-WEBHOOK-URL'
-    channel: '#alerts'
-    text: 'Alert: {{ .CommonLabels.alertname }}\nDescription: {{ .CommonAnnotations.description }}'
-
+  - channel: "< slack channel name >"
+    send_resolved: true
+    api_url: '< you need to create an app on slack and put url here >'
+    
+ 
 6)-Change the ownership of configuration directory to Alert-Manager user:
 
 sudo chown alertmanager:alertmanager -R /etc/alertmanager
@@ -75,7 +79,8 @@ sudo systemctl enable alertmanager
 
 The Alert-Manager listens on HTTP port 9093 by default.
 
-9)-go to /etc/prometheus/prometheus.yml to enable talking to Alert-Manager.
+9)-edit /etc/prometheus/prometheus.yml to enable talking to Alert-Manager and add the target.
+
 
 
 
