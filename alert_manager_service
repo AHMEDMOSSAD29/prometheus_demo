@@ -1,0 +1,81 @@
+########################### Install Alert Manager as a Service ###################################
+
+1)- get alert manager
+
+wget https://github.com/prometheus/alertmanager/releases/download/v0.24.0/alertmanager-0.24.0.linux-amd64.tar.gz
+
+tar -xvf alertmanager-0.24.0.linux-amd64.tar.gz
+
+cd alertmanager-0.24.0.linux-amd64
+
+2)- add Alert-Manager user with no shell:
+
+sudo useradd --no-create-home --shell /bin/false alertmanager
+
+3)-copy binary files like alertmanager and amtool:
+
+sudo mv alertmanager /usr/local/bin/
+sudo mv amtool /usr/local/bin/
+sudo chown alertmanager:alertmanager /usr/local/bin/alertmanager
+sudo chown alertmanager:alertmanager /usr/local/bin/amtool
+
+4)-Make configuration directory for Alert-Manager:
+
+sudo mkdir /etc/alertmanager
+
+5)-Create Alert Manager Configuration file(alertmanager.yml) and add those lines for example:
+
+sudo vi /etc/alertmanager/alertmanager.yml
+
+route:
+  receiver: 'slack-notifications'
+
+receivers:
+- name: 'slack-notifications'
+  slack_configs:
+  - api_url: 'https://hooks.slack.com/services/YOUR-SLACK-WEBHOOK-URL'
+    channel: '#alerts'
+    text: 'Alert: {{ .CommonLabels.alertname }}\nDescription: {{ .CommonAnnotations.description }}'
+
+6)-Change the ownership of configuration directory to Alert-Manager user:
+
+sudo chown alertmanager:alertmanager -R /etc/alertmanager
+
+
+7)-create the service file to be able to restart the Alert-Manager service and add those lines:
+
+sudo vi /etc/systemd/system/alertmanager.service
+
+[Unit]
+Description=Alertmanager
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=alertmanager
+Group=alertmanager
+Type=simple
+WorkingDirectory=/etc/alertmanager/
+ExecStart=/usr/local/bin/alertmanager --config.file=/etc/alertmanager/alertmanager.yml --web.external-url http://0.0.0.0:9093
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+8)-start and enable Alert-Manager service:
+
+sudo systemctl daemon-reload
+
+sudo systemctl start alertmanager
+
+sudo systemctl status alertmanager
+
+sudo systemctl enable alertmanager
+
+The Alert-Manager listens on HTTP port 9093 by default.
+
+9)-go to /etc/prometheus/prometheus.yml to enable talking to Alert-Manager.
+
+
+

@@ -1,0 +1,21 @@
+1)- go to /etc/prometheus/prometheus.yml to enable Rules:
+
+sudo vi /etc/prometheus/prometheus.yml
+
+2)- Create rules file(rules.yml) under /etc/prometheus/ directory:
+
+sudo vi /etc/prometheus/rules.yml
+
+3)-for test add those lines:
+
+groups:
+  - name: check-rule
+    rules:
+      - record: node_network_rate
+        expr: rate(node_network_receive_bytes_total{job="nodes"}[2m])
+
+4)- Restart Prometheus service:
+
+sudo systemctl restart prometheus
+
+
