@@ -2,7 +2,7 @@
 
 1)-to install node exporter Follow below steps:
 
-wget https://github.com/prometheus/node_exporter/releases/download/v1.4.0/node_exporter-1.4.0.linux-amd64.tar.gz
+wget https://github.com/prometheus/node_exporter/releases/download/v1.4.0/node_exporter-1.9.0.linux-amd64.tar.gz
 
 tar xvf node_exporter-1.4.0.linux-amd64.tar.gz
 
